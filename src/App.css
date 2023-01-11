@@ -23,7 +23,7 @@ body {
     font-size: 13px;
   }
 
-  .FormControl {
+  .FormControl .StopMeasureComponent{
     display: inline;
   }
 }

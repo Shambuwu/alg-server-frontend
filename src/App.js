@@ -15,37 +15,34 @@ function FormComponentB() {
 
     let handleSubmit = async (e) => {
         e.preventDefault();
-        checkUserStatus(user).then(async () => {
-                try {
-                    let res = await fetch(`http://77.172.199.5:8080/data/start_measurement/${user}/${label}`, {
-                        method: "POST",
-                    });
-                    if (res.status === 200) {
-                        setLabel("");
-                        setStatus(1);
-                        setMessage(`Successfully started measurement for user ${user}`);
-                        setContext(false);
-                    } else {
-                        setMessage("An error has occurred");
-                        setStatus(0);
-                    }
-                } catch (err) {
-                    console.log(err)
-                }
+        try {
+            let res = await fetch(`http://77.172.199.5:8080/data/start_measurement/${user}/${label}`, {
+                method: "POST",
+            });
+            if (res.status === 200) {
+                setLabel("");
+                setStatus(1);
+                setMessage(`Successfully started measurement for user ${user}`);
+                setContext(true);
+            } else {
+                setMessage("An error has occurred");
+                setStatus(0);
             }
-        );
+        } catch (err) {
+            console.log(err)
+        }
     }
+
 
     async function checkUserStatus(user) {
         try {
             let res = await fetch(`http://77.172.199.5:8080/data/get/${user}/measure_proxy`, {
                 method: "POST",
             });
-            if (res.status === 200) {
-                console.log(res.body);
-                setContext(false);
-            } else {
-            }
+            res.text().then((r) => {
+                setContext(r === 'true');
+                setStatus(1);
+            });
         } catch (err) {
             console.log(err)
         }
@@ -65,8 +62,9 @@ function FormComponentB() {
                 value={user}
                 label="User"
                 onChange={(e) => {
-                    setUser(e.target.value)
-                    checkUserStatus(user).then(test => console.log(test))
+                    checkUserStatus(e.target.value).then(() => {
+                        setUser(e.target.value)
+                    })
                 }}
                 sx={{
                     minWidth: "200px",
@@ -132,19 +130,37 @@ function FormComponentB() {
     );
 }
 
-function StopMeasureComponent(props) {
+function StopMeasureComponent() {
     const [context, setContext] = useContext(MeasuringStatusContext);
-    const [userContext, setUserContext] = useContext(UserContext);
+    const [user, setUser] = useContext(UserContext);
+    const [status, setStatus] = useState(0);
+    const [message, setMessage] = useState("");
+
+    async function checkUserStatus(user) {
+        try {
+            let res = await fetch(`http://77.172.199.5:8080/data/get/${user}/measure_proxy`, {
+                method: "POST",
+            });
+            res.text().then((r) => {
+                setContext(r === 'true');
+                setStatus(1);
+                setMessage(`${user} is currently collecting data`);
+            });
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     let stopMeasurement = async (e) => {
         e.preventDefault();
         try {
-            let res = await fetch(`http://77.172.199.5:8080/data/stop_measurement/${userContext}`, {
+            let res = await fetch(`http://77.172.199.5:8080/data/stop_measurement/${user}`, {
                 method: "POST",
             });
             if (res.status === 200) {
                 setContext(false)
-            } else {
+                setStatus(1);
+                setMessage(`${user} is no longer collecting data`);
             }
         } catch (err) {
             console.log(err)
@@ -152,7 +168,50 @@ function StopMeasureComponent(props) {
     }
 
     return (
-        <>
+        <FormControl
+            sx={{
+                m: 1,
+                display: "inline-block"
+            }}
+            size="small"
+        >
+            <InputLabel id="demo-simple-select-label">User</InputLabel>
+            <Select
+                size="small"
+                value={user}
+                label="User"
+                onChange={(e) => {
+                    checkUserStatus(e.target.value).then(() => {
+                        setUser(e.target.value)
+                    })
+                }}
+                sx={{
+                    minWidth: "200px",
+                    color: "white",
+                    '.MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'rgba(228, 219, 233, 0.25)',
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'rgba(228, 219, 233, 0.25)',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'rgba(228, 219, 233, 0.25)',
+                    },
+                    '.MuiSvgIcon-root ': {
+                        fill: "white !important",
+                    },
+                    'input': {
+                        '&::placeholder': {
+                            textOverflow: 'ellipsis !important',
+                            color: 'blue'
+                        }
+                    }
+                }}
+            >
+                <MenuItem value={"levi"}>Levi</MenuItem>
+                <MenuItem value={"kevin"}>Kevin</MenuItem>
+                <MenuItem value={"geert"}>Geert</MenuItem>
+            </Select>
             <Button
                 onClick={stopMeasurement}
                 type="submit"
@@ -165,17 +224,20 @@ function StopMeasureComponent(props) {
             >
                 Stop Measurement
             </Button>
-            <FormMessage message={props.message} status={props.status}/>
-        </>
+            <FormMessage message={message} status={status}/>
+        </FormControl>
     )
 }
 
 function FormMessage(props) {
+    console.log(props);
+
     return (
         <div className="message">{
             props.message ?
                 props.status === 1 ?
-                    <p style={{color: "green"}}>✅ - {props.message}</p> : <p style={{color: "red"}}>⚠️ - {props.message}</p>
+                    <p style={{color: "green"}}>✅ - {props.message}</p> :
+                    <p style={{color: "red"}}>⚠️ - {props.message}</p>
                 : null
         }
         </div>
@@ -193,7 +255,9 @@ function App() {
                 <p>⚕️️ Powerchainger HWE-SKT-proxy front-end ⚕️</p>
             </header>
             <MeasuringStatusContext.Provider value={[measuringStatus, setMeasuringStatus]}>
-                {!measuringStatus ? <FormComponentB/> : <UserContext value={[user, setUser]}><StopMeasureComponent/></UserContext>}
+                <UserContext.Provider value={[user, setUser]}>
+                    {!measuringStatus ? <FormComponentB/> : <StopMeasureComponent/>}
+                </UserContext.Provider>
             </MeasuringStatusContext.Provider>
         </div>
     );

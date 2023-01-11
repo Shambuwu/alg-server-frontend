@@ -1,10 +1,32 @@
 import logo from './logo.svg';
 import './App.css';
-import {useState, Component, useContext, createContext} from "react";
+import {useState, Component, useContext, createContext, useEffect} from "react";
 import {Button, FormControl, InputLabel, MenuItem, Select, TextField} from "@mui/material";
 
 const MeasuringStatusContext = createContext(null);
 const UserContext = createContext(null);
+
+function IncomingDataView() {
+    const [incomingData, setIncomingData] = useState([]);
+    const [user, setUser] = useContext(UserContext);
+
+    // useEffect(() => {
+    //     setInterval(() => {
+    //         fetch(`77.172.199.5:8080/data/data_entry/levi/1`).then(r => {
+    //             return r.body
+    //         }).then(r => {
+    //             console.log(r)
+    //         });
+    //         // setIncomingData([...incomingData, "test\n"])
+    //     }, 1000)
+    // })
+
+    return (
+        <pre>
+            {incomingData ? incomingData : null}
+        </pre>
+    )
+}
 
 function FormComponentB() {
     const [context, setContext] = useContext(MeasuringStatusContext);
@@ -230,8 +252,6 @@ function StopMeasureComponent() {
 }
 
 function FormMessage(props) {
-    console.log(props);
-
     return (
         <div className="message">{
             props.message ?
@@ -257,6 +277,7 @@ function App() {
             <MeasuringStatusContext.Provider value={[measuringStatus, setMeasuringStatus]}>
                 <UserContext.Provider value={[user, setUser]}>
                     {!measuringStatus ? <FormComponentB/> : <StopMeasureComponent/>}
+                    <IncomingDataView/>
                 </UserContext.Provider>
             </MeasuringStatusContext.Provider>
         </div>

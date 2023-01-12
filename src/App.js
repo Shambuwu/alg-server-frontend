@@ -1,29 +1,74 @@
 import logo from './logo.svg';
 import './App.css';
 import {useState, Component, useContext, createContext, useEffect} from "react";
-import {Button, FormControl, InputLabel, MenuItem, Select, TextField} from "@mui/material";
+import {
+    Alert,
+    Button,
+    CircularProgress, Fade,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField
+} from "@mui/material";
 
 const MeasuringStatusContext = createContext(null);
 const UserContext = createContext(null);
 
+function CustomFadeAlert(props) {
+    const [fade, setFade] = useState(false);
+
+    useEffect(() => {
+        setFade(true);
+
+        setTimeout(() => {
+            setFade(false);
+        }, 2000)
+
+    }, [props.incomingData])
+
+    return (
+        <Fade unmountOnExit={true} in={fade} timeout={{
+            appear: 200,
+            enter: 300,
+            exit: 600,
+        }}>
+            <Alert severity="success">Successfully inserted data: {props.incomingData}</Alert>
+        </Fade>
+    )
+}
+
 function IncomingDataView() {
-    const [incomingData, setIncomingData] = useState([]);
+    const [incomingData, setIncomingData] = useState(null);
     const [user, setUser] = useContext(UserContext);
 
-    // useEffect(() => {
-    //     setInterval(() => {
-    //         fetch(`77.172.199.5:8080/data/data_entry/levi/1`).then(r => {
-    //             return r.body
-    //         }).then(r => {
-    //             console.log(r)
-    //         });
-    //         // setIncomingData([...incomingData, "test\n"])
-    //     }, 1000)
-    // })
+    useEffect(() => {
+        let interval = setInterval(() => {
+            fetch(`http://77.172.199.5:8080/data/last_line/${user}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+            }).then(r => {
+                return r.json()
+            }).then(r => {
+                setIncomingData(r.data);
+            });
+        }, 5000)
+
+        return () => {
+            clearInterval(interval);
+        }
+    })
 
     return (
         <pre>
-            {incomingData ? incomingData : null}
+            {incomingData ?
+                <CustomFadeAlert incomingData={incomingData}/>
+                :
+                <CircularProgress/>
+            }
         </pre>
     )
 }
@@ -276,8 +321,12 @@ function App() {
             </header>
             <MeasuringStatusContext.Provider value={[measuringStatus, setMeasuringStatus]}>
                 <UserContext.Provider value={[user, setUser]}>
-                    {!measuringStatus ? <FormComponentB/> : <StopMeasureComponent/>}
-                    <IncomingDataView/>
+                    {!measuringStatus ? <FormComponentB/> :
+                        <>
+                            <StopMeasureComponent/>
+                            <IncomingDataView/>
+                        </>
+                    }
                 </UserContext.Provider>
             </MeasuringStatusContext.Provider>
         </div>

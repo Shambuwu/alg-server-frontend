@@ -71,84 +71,7 @@ function FormComponentB() {
     }
 
     return (
-        <FormControl
-            onSubmit={handleSubmit}
-            sx={{
-                m: 1,
-                display: "inline-block"
-            }}
-            size="small"
-        >
-            <InputLabel id="demo-simple-select-label">User</InputLabel>
-            <Select
-                value={user}
-                label="User"
-                onChange={(e) => {
-                    checkUserStatus(e.target.value).then(() => {
-                        setUser(e.target.value)
-                    })
-                }}
-                sx={{
-                    minWidth: "200px",
-                    color: "white",
-                    '.MuiOutlinedInput-notchedOutline': {
-                        borderColor: 'rgba(228, 219, 233, 0.25)',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: 'rgba(228, 219, 233, 0.25)',
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: 'rgba(228, 219, 233, 0.25)',
-                    },
-                    '.MuiSvgIcon-root ': {
-                        fill: "white !important",
-                    },
-                    'input': {
-                        '&::placeholder': {
-                            textOverflow: 'ellipsis !important',
-                            color: 'blue'
-                        }
-                    }
-                }}
-            >
-                <MenuItem value={"levi"}>Levi</MenuItem>
-                <MenuItem value={"kevin"}>Kevin</MenuItem>
-                <MenuItem value={"geert"}>Geert</MenuItem>
-            </Select>
-            <TextField
-                type="text"
-                value={label}
-                placeholder="Label"
-                onChange={(e) => setLabel(e.target.value)}
-                size="small"
-                sx={{
-                    minWidth: "200px",
-                    maxWidth: "200px",
-                    input: {
-                        color: "aliceblue"
-                    },
-                    fieldset: {borderColor: 'rgba(228, 219, 233, 0.25)'},
-                    "& .MuiOutlinedInput-root": {
-                        "&:hover fieldset": {
-                            borderColor: 'rgba(228, 219, 233, 0.25)'
-                        },
-                    },
-                }}
-            />
-            <Button
-                onClick={handleSubmit}
-                type="submit"
-                variant="outlined"
-                sx={{
-                    color: 'rgba(228, 219, 233, 0.50)',
-                    borderColor: 'rgba(228, 219, 233, 0.25)',
-                    minWidth: "200px"
-                }}
-            >
-                Start Measurement
-            </Button>
-            <FormMessage message={message} status={status}/>
-        </FormControl>
+		<MeasurementForm user={user} status={status} action={handleSubmit}/>
     );
 }
 
@@ -190,7 +113,13 @@ function StopMeasureComponent() {
     }
 
     return (
-        <FormControl
+		<MeasurementForm user={user} status={status} action={stopMeasurement}/>
+    )
+}
+
+function MeasurementForm(props) {
+	return (
+		<FormControl
             sx={{
                 m: 1,
                 display: "inline-block"
@@ -200,7 +129,7 @@ function StopMeasureComponent() {
             <InputLabel id="demo-simple-select-label">User</InputLabel>
             <Select
                 size="small"
-                value={user}
+                value={props.user}
                 label="User"
                 onChange={(e) => {
                     checkUserStatus(e.target.value).then(() => {
@@ -235,7 +164,7 @@ function StopMeasureComponent() {
                 <MenuItem value={"geert"}>Geert</MenuItem>
             </Select>
             <Button
-                onClick={stopMeasurement}
+                onClick={props.action}
                 type="submit"
                 variant="outlined"
                 sx={{
@@ -246,9 +175,9 @@ function StopMeasureComponent() {
             >
                 Stop Measurement
             </Button>
-            <FormMessage message={message} status={status}/>
+            <FormMessage message={props.message} status={props.status}/>
         </FormControl>
-    )
+	);
 }
 
 function FormMessage(props) {

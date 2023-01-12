@@ -28,7 +28,7 @@ function IncomingDataView() {
     )
 }
 
-function FormComponentB() {
+function FormComponent() {
     const [context, setContext] = useContext(MeasuringStatusContext);
     const [user, setUser] = useContext(UserContext);
     const [label, setLabel] = useState("");
@@ -55,23 +55,12 @@ function FormComponentB() {
         }
     }
 
-
-    async function checkUserStatus(user) {
-        try {
-            let res = await fetch(`http://77.172.199.5:8080/data/get/${user}/measure_proxy`, {
-                method: "POST",
-            });
-            res.text().then((r) => {
-                setContext(r === 'true');
-                setStatus(1);
-            });
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
     return (
-		<MeasurementForm user={user} status={status} action={handleSubmit}/>
+		<MeasurementForm 
+			status={status} 
+			message={message} 
+			action={handleSubmit}
+		/>
     );
 }
 
@@ -80,21 +69,6 @@ function StopMeasureComponent() {
     const [user, setUser] = useContext(UserContext);
     const [status, setStatus] = useState(0);
     const [message, setMessage] = useState("");
-
-    async function checkUserStatus(user) {
-        try {
-            let res = await fetch(`http://77.172.199.5:8080/data/get/${user}/measure_proxy`, {
-                method: "POST",
-            });
-            res.text().then((r) => {
-                setContext(r === 'true');
-                setStatus(1);
-                setMessage(`${user} is currently collecting data`);
-            });
-        } catch (err) {
-            console.log(err)
-        }
-    }
 
     let stopMeasurement = async (e) => {
         e.preventDefault();
@@ -113,11 +87,32 @@ function StopMeasureComponent() {
     }
 
     return (
-		<MeasurementForm user={user} status={status} action={stopMeasurement}/>
+		<MeasurementForm
+			status={status} 
+			message={message} 
+			action={stopMeasurement}
+		/>
     )
 }
 
 function MeasurementForm(props) {
+    const [user, setUser] = useContext(UserContext);
+	
+	async function checkUserStatus(user) {
+        try {
+            let res = await fetch(`http://77.172.199.5:8080/data/get/${user}/measure_proxy`, {
+                method: "POST",
+            });
+            res.text().then((r) => {
+                setContext(r === 'true');
+                setStatus(1);
+                setMessage(`${user} is currently collecting data`);
+            });
+        } catch (err) {
+            console.log(err)
+        }
+    }
+	
 	return (
 		<FormControl
             sx={{
@@ -129,7 +124,7 @@ function MeasurementForm(props) {
             <InputLabel id="demo-simple-select-label">User</InputLabel>
             <Select
                 size="small"
-                value={props.user}
+                value={user}
                 label="User"
                 onChange={(e) => {
                     checkUserStatus(e.target.value).then(() => {
@@ -205,7 +200,7 @@ function App() {
             </header>
             <MeasuringStatusContext.Provider value={[measuringStatus, setMeasuringStatus]}>
                 <UserContext.Provider value={[user, setUser]}>
-                    {!measuringStatus ? <FormComponentB/> : <StopMeasureComponent/>}
+                    {!measuringStatus ? <FormComponent/> : <StopMeasureComponent/>}
                     <IncomingDataView/>
                 </UserContext.Provider>
             </MeasuringStatusContext.Provider>

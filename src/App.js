@@ -60,6 +60,7 @@ function FormComponent() {
 			status={status} 
 			message={message} 
 			action={handleSubmit}
+			hideTextField={false}
 		/>
     );
 }
@@ -91,6 +92,7 @@ function StopMeasureComponent() {
 			status={status} 
 			message={message} 
 			action={stopMeasurement}
+			hideTextField={true}
 		/>
     )
 }
@@ -158,6 +160,28 @@ function MeasurementForm(props) {
                 <MenuItem value={"kevin"}>Kevin</MenuItem>
                 <MenuItem value={"geert"}>Geert</MenuItem>
             </Select>
+			{props.hideTextField ? null : 
+			<TextField
+                type="text"
+                value={label}
+                placeholder="Label"
+                onChange={(e) => setLabel(e.target.value)}
+                size="small"
+                sx={{
+                    minWidth: "200px",
+                    maxWidth: "200px",
+                    input: {
+                        color: "aliceblue"
+                    },
+                    fieldset: {borderColor: 'rgba(228, 219, 233, 0.25)'},
+                    "& .MuiOutlinedInput-root": {
+                        "&:hover fieldset": {
+                            borderColor: 'rgba(228, 219, 233, 0.25)'
+                        },
+                    },
+                }}
+            />
+			}
             <Button
                 onClick={props.action}
                 type="submit"

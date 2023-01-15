@@ -44,7 +44,7 @@ function IncomingDataView() {
 
     useEffect(() => {
         let interval = setInterval(() => {
-            fetch(`http://77.172.199.5:8080/data/last_line/${user}`, {
+            fetch(`http://shambuwu.com:8080/data/last_line/${user}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ function FormComponentB() {
     let handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            let res = await fetch(`http://77.172.199.5:8080/data/start_measurement/${user}/${label}`, {
+            let res = await fetch(`http://shambuwu.com:8080/data/start_measurement/${user}/${label}`, {
                 method: "POST",
             });
             if (res.status === 200) {
@@ -103,7 +103,7 @@ function FormComponentB() {
 
     async function checkUserStatus(user) {
         try {
-            let res = await fetch(`http://77.172.199.5:8080/data/get/${user}/measure_proxy`, {
+            let res = await fetch(`http://shambuwu.com:8080/data/get/${user}/measure_proxy`, {
                 method: "POST",
             });
             res.text().then((r) => {
@@ -205,7 +205,7 @@ function StopMeasureComponent() {
 
     async function checkUserStatus(user) {
         try {
-            let res = await fetch(`http://77.172.199.5:8080/data/get/${user}/measure_proxy`, {
+            let res = await fetch(`http://shambuwu.com:8080/data/get/${user}/measure_proxy`, {
                 method: "POST",
             });
             res.text().then((r) => {
@@ -221,7 +221,7 @@ function StopMeasureComponent() {
     let stopMeasurement = async (e) => {
         e.preventDefault();
         try {
-            let res = await fetch(`http://77.172.199.5:8080/data/stop_measurement/${user}`, {
+            let res = await fetch(`http://shambuwu.com:8080/data/stop_measurement/${user}`, {
                 method: "POST",
             });
             if (res.status === 200) {

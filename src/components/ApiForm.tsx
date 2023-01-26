@@ -5,7 +5,19 @@ import {checkUserStatusRequest} from "../api/DataApi";
 import MeasuringStatusContext from "../hooks/MeasuringStatusContext";
 import FormMessage from "./FormMessage";
 
-export default function ApiForm(props) {
+interface Props {
+    user: string
+    setUser: (string) => void
+    label: string
+    setLabel: (string) => void
+    action: () => void
+    type: string
+    message: string
+    status: number
+    hideTextField: boolean
+}
+
+export default function ApiForm(props: Props) {
     const [context, setContext]: any = useContext(MeasuringStatusContext);
     const [status, setStatus] = useState(0);
 

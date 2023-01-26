@@ -1,6 +1,5 @@
 import {Button, FormControl, InputLabel, MenuItem, Select, TextField} from "@mui/material";
-import {useState, Component, useContext, createContext, useEffect} from "react";
-import PropTypes from "prop-types";
+import {useState, useContext} from "react";
 import {checkUserStatusRequest} from "../api/DataApi";
 import MeasuringStatusContext from "../hooks/MeasuringStatusContext";
 import FormMessage from "./FormMessage";

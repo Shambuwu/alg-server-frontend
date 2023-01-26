@@ -1,4 +1,4 @@
-import {useState, useContext, createContext, useEffect} from "react";
+import {useState, useContext} from "react";
 import MeasuringStatusContext from "../hooks/MeasuringStatusContext";
 import UserContext from "../hooks/UserContext";
 import {checkUserStatusRequest, stopUserMeasurement} from "../api/DataApi";

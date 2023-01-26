@@ -1,4 +1,9 @@
-export default function FormMessage(props) {
+interface Props {
+    message: string
+    status: number
+}
+
+export default function FormMessage(props: Props) {
     return (
         <div className="message">{
             props.message ?

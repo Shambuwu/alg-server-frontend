@@ -8,10 +8,10 @@ import FormMessage from "./FormMessage";
 interface Props {
     user: string
     setUser: (string) => void
-    label: string
-    setLabel: (string) => void
+    label?: string
+    setLabel?: (string) => void
     action: (e: any) => Promise<void>
-    type: string
+    type?: string
     message: string
     status: number
     hideTextField: boolean
@@ -80,7 +80,7 @@ export default function ApiForm(props: Props) {
                     type="text"
                     value={props.label}
                     placeholder="Label"
-                    onChange={(e) => props.setLabel(e.target.value)}
+                    onChange={(e) => props.setLabel?.((e.target.value))}
                     size="small"
                     sx={{
                         minWidth: "200px",

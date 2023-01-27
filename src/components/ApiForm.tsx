@@ -3,9 +3,9 @@ import {useState, useContext} from "react";
 import {checkUserStatusRequest} from "../api/DataApi";
 import MeasuringStatusContext from "../hooks/MeasuringStatusContext";
 import FormMessage from "./FormMessage";
-import ApiPropsInterface from "../interfaces/ApiPropsInterface";
+import ApiFormPropsInterface from "../interfaces/ApiFormPropsInterface";
 
-export default function ApiForm(props: ApiPropsInterface) {
+export default function ApiForm(props: ApiFormPropsInterface) {
     const [context, setContext]: any = useContext(MeasuringStatusContext);
     const [status, setStatus] = useState(0);
 

@@ -1,4 +1,4 @@
-export default interface ApiPropsInterface {
+export default interface ApiFormPropsInterface {
     user: string
     setUser: (string) => void
     label?: string

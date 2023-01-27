@@ -1,9 +1,6 @@
-interface Props {
-    message: string
-    status: number
-}
+import FormMessagePropsInterface from "../interfaces/FormMessagePropsInterface";
 
-export default function FormMessage(props: Props) {
+export default function FormMessage(props: FormMessagePropsInterface) {
     return (
         <div className="message">{
             props.message ?
